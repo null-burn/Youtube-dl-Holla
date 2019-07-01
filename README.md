@@ -1,4 +1,4 @@
-# Youtube-dl-Holla
+# Youtube-dl Holla
 
 This is a simple Windows Application wrapper for the console application called youtube-dl. This was my first attempt at WPF so be kind. All this app really does is pass the argument values to the youtube-dl, that’s all. It was just an interface for my friend who found it difficult to use command line.
 
