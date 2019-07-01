@@ -1,0 +1,90 @@
+﻿<Controls:MetroWindow x:Class="YoutubeDL_Holla.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:consoleControl="clr-namespace:ConsoleControl.WPF;assembly=ConsoleControl.WPF"
+        xmlns:local="clr-namespace:YoutubeDL_Holla"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        mc:Ignorable="d"
+        Title="Youtube-dl Holla" Height="560" Width="800">
+    <Border Padding="10">
+        <StackPanel>
+            <StackPanel Margin="0 0 0 2">
+                <TextBlock>URL</TextBlock>
+            </StackPanel>
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Name="urlToAdd"></TextBox>
+                    <Button Grid.Column="1" Content="Get Media Info" Name="btnGetMediaInfo" Click="GetMediaInfo_Click" Margin="10 0 0 0" />
+                </Grid>
+            </StackPanel>
+            <StackPanel Margin="0 10 0 0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0 0 0 2">Options</TextBlock>
+                    <CheckBox Grid.Row="1" Grid.Column="0" Content="Vebose" Name="chkVerbose"/>
+                    <CheckBox Grid.Row="1" Grid.Column="1" Content="Keep" Name="chkKeep" IsChecked="True" />
+                </Grid>
+            </StackPanel>
+            <StackPanel Margin="0 10 0 0">
+                <TextBlock Margin="0 0 0 2">Audio Quality</TextBlock>
+                <ComboBox Name="cbAudio" ItemsSource="{Binding}" DisplayMemberPath="Description" SelectedValuePath="FormatCode">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Margin="0 10 0 0">
+                <TextBlock Margin="0 0 0 2">Video Quality</TextBlock>
+                <ComboBox Name="cbVideo" ItemsSource="{Binding}" DisplayMemberPath="Description" SelectedValuePath="FormatCode" Grid.ColumnSpan="2">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Margin="0 10 0 0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="Get Audio Only" Name="btnAudioOnly" Click="GetMedia_Click" Margin="0 0 0 0" />
+                    <Button Grid.Column="1" Content="Get Audio (MP3)" Name="btnAudioOnlyMP3" Click="GetMedia_Click" Margin="10 0 0 0" />
+                    <Button Grid.Column="2" Content="Get Video Only" Name="btnVideoOnly" Click="GetMedia_Click" Margin="10 0 0 0" />
+                    <Button Grid.Column="3" Content="Get Audio+Video" Name="btnAudioPlusVideo" Click="GetMedia_Click" Margin="10 0 0 0" />
+                </Grid>
+            </StackPanel>
+            <StackPanel>
+                <Grid Height="240" Margin="0 10 0 0" >
+                    <ScrollViewer Name="consoleControlSV" HorizontalScrollBarVisibility="Disabled"  VerticalScrollBarVisibility="Visible" CanContentScroll="True">
+                        <consoleControl:ConsoleControl x:Name="consoleControl" FontSize="14" FontFamily="Consolas"/>
+                    </ScrollViewer>
+                </Grid>
+            </StackPanel>
+            <StackPanel>
+                    <TextBlock FontStyle="Italic" FontFamily="Verdana" Opacity="0.3" Margin="0 3 0 0" HorizontalAlignment="right">necessity is the mother of invention</TextBlock>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="left">
+                <TextBlock FontStyle="Italic" FontFamily="Verdana" Opacity="0.3" Margin="0 3 0 0" MaxHeight="1" MinWidth="400" Name="txtDebug">t</TextBlock>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Controls:MetroWindow>
