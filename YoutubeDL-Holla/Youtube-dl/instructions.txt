@@ -1,0 +1,3 @@
+﻿Download youtube-dl.exe from https://yt-dl.org/downloads/2019.06.27/youtube-dl.exe and place it in this folder.
+
+For MP3 conversion to work you also need to download http://builds.libav.org/windows/release-gpl/, tested with http://builds.libav.org/windows/release-gpl/libav-0.8.17-win64.7z. Copy all the file from libav-0.8.17-win64\win64\usr\bin to this folder

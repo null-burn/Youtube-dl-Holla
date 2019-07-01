@@ -26,9 +26,6 @@ namespace YoutubeDL_Holla
             btnAudioOnlyMP3.IsEnabled = false;
             btnVideoOnly.IsEnabled = false;
             btnAudioPlusVideo.IsEnabled = false;
-
-            //DEBUG
-            urlToAdd.Text = "https://youtu.be/FQLGhPHzxjc";
         }
 
         private void GetMedia_Click(object sender, RoutedEventArgs e)
