@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:YoutubeDL_Holla"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="Youtube-dl Holla" Height="560" Width="800">
+        Title="Youtube-dl Holla" Height="600" Width="800">
     <Border Padding="10">
         <StackPanel>
             <StackPanel Margin="0 0 0 2">
@@ -21,6 +21,19 @@
                     </Grid.ColumnDefinitions>
                     <TextBox Grid.Column="0" Name="urlToAdd"></TextBox>
                     <Button Grid.Column="1" Content="Get Media Info" Name="btnGetMediaInfo" Click="GetMediaInfo_Click" Margin="10 0 0 0" />
+                </Grid>
+            </StackPanel>
+            <StackPanel Margin="0 0 0 2">
+                <TextBlock>Save To</TextBlock>
+            </StackPanel>
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Name="saveToDirectory" IsReadOnly="True" Background="LightGray"></TextBox>
+                    <Button Grid.Column="1" Content="Open" Name="btnOpenDirectory" Click="SaveDirectory_Click" Margin="10 0 0 0" />
                 </Grid>
             </StackPanel>
             <StackPanel Margin="0 10 0 0">

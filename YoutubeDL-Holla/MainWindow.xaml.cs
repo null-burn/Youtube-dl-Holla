@@ -8,13 +8,16 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Threading;
+using YoutubeDL_Holla.Helpers;
 
 namespace YoutubeDL_Holla
 {
     public partial class MainWindow : MetroWindow
     {
         string msgInvalidUrl = "Invalid URL, try again!";
-        string youtubeDlFileName = @"Youtube-dl\youtube-dl.exe";
+        string msgInvalidFolderPath = "Invalid folder path, try again!";
+        string msgMissingYoutubeDl = "Missing youtube-dl.exe, please review included instructions.";
+        string msgNothingFound = "Nothing found to download, check your URL";
         DispatcherTimer dispatcherTimer = new DispatcherTimer();
 
         public MainWindow()
@@ -30,8 +33,23 @@ namespace YoutubeDL_Holla
 
         private void GetMedia_Click(object sender, RoutedEventArgs e)
         {
+            Dir dir = new Dir();
+            bool letsDoIt = true;
+
             string url = urlToAdd.Text;
-            if (Helpers.Url.Valid(url))
+            if (!Url.Valid(url))
+            {
+                letsDoIt = false;
+                MessageBox.Show(msgInvalidUrl);
+            }
+
+            if (!dir.CheckFolderPath(saveToDirectory.Text) && letsDoIt)
+            {
+                letsDoIt = false;
+                MessageBox.Show(msgInvalidFolderPath);
+            }
+
+            if (letsDoIt)
             {
                 string btncontent = (sender as Button).Name.ToString();
 
@@ -60,10 +78,6 @@ namespace YoutubeDL_Holla
                     YoutubeDLProcess(url, cbAudio.SelectedValue.ToString(), cbVideo.SelectedValue.ToString());
                 }
             }
-            else
-            {
-                MessageBox.Show(msgInvalidUrl);
-            }
         }
 
         private void DisableSubButtons()
@@ -87,19 +101,31 @@ namespace YoutubeDL_Holla
 
         private void GetMediaInfo_Click(object sender, RoutedEventArgs e)
         {
+            PreReq preReq = new PreReq();
+            bool letsDoIt = true;
+
             string url = urlToAdd.Text;
-            if (Helpers.Url.Valid(url))
+
+            if (!Url.Valid(url))
             {
+                letsDoIt = false;
+                MessageBox.Show(msgInvalidUrl);
+            }
+            if (!preReq.YoutubeDLExists() && letsDoIt)
+            {
+                letsDoIt = false;
+                MessageBox.Show(msgMissingYoutubeDl);
+            }
+
+            if (letsDoIt)
+            {
+                cbAudio.ItemsSource = cbVideo.ItemsSource = null;
                 consoleControl.ClearOutput();
                 btnGetMediaInfo.Background = Brushes.LawnGreen;
                 btnGetMediaInfo.IsEnabled = false;
 
                 DisableSubButtons();
                 YoutubeDLGetMediaInfoProcess(url);
-            }
-            else
-            {
-                MessageBox.Show(msgInvalidUrl);
             }
         }
 
@@ -134,11 +160,12 @@ namespace YoutubeDL_Holla
                     arguments.Append("-f " + formatVideoCode + "+" + formatAudioCode + " ");
                 }
             }
-            
+
+            arguments.Append("-o " + saveToDirectory.Text + "/%(title)s.%(ext)s ");
             arguments.Append(url);
 
             consoleControl.ShowDiagnostics = true;
-            consoleControl.StartProcess(youtubeDlFileName, arguments.ToString());
+            consoleControl.StartProcess(PreReq.youtubedlExe, arguments.ToString());
             consoleControlSV.ScrollToBottom();
 
             DispatcherTimer dispatcherTimer = new DispatcherTimer();
@@ -162,7 +189,7 @@ namespace YoutubeDL_Holla
             arguments.Append(url);
 
             consoleControl.ShowDiagnostics = true;
-            consoleControl.StartProcess(youtubeDlFileName, arguments.ToString());
+            consoleControl.StartProcess(PreReq.youtubedlExe, arguments.ToString());
             consoleControlSV.ScrollToBottom();
 
             dispatcherTimer.Tick += new EventHandler(ProcessingGetMediaInfo);
@@ -194,7 +221,7 @@ namespace YoutubeDL_Holla
         {
             if (!consoleControl.IsProcessRunning)
             {
-                Helpers.Output output = new Helpers.Output();
+                Output output = new Output();
                 RichTextBox rtbConsole = (RichTextBox)consoleControl.Content;
                 TextRange txtRange = new TextRange(rtbConsole.Document.ContentStart, rtbConsole.Document.ContentEnd);
                 txtDebug.Text += txtRange.Text;
@@ -209,13 +236,22 @@ namespace YoutubeDL_Holla
                 cbVideo.ItemsSource = availableMediaOutputList.Where(x => x.Resolution != "audio only").Reverse().ToList();
                 cbVideo.SelectedIndex = 0;
 
-                cbAudio.IsEnabled = true;
-                cbVideo.IsEnabled = true;
+                if (cbAudio.Items.Count > 0)
+                {
+                    cbAudio.IsEnabled = true;
+                    btnAudioOnly.IsEnabled = true;
+                    btnAudioOnlyMP3.IsEnabled = true;
+                }
+                if (cbVideo.Items.Count > 0)
+                {
+                    cbVideo.IsEnabled = true;
+                    btnVideoOnly.IsEnabled = true;
+                }
+                if (cbAudio.Items.Count > 0 && cbVideo.Items.Count > 0)
+                {
+                    btnAudioPlusVideo.IsEnabled = true;
+                }
 
-                btnAudioOnly.IsEnabled = true;
-                btnAudioOnlyMP3.IsEnabled = true;
-                btnVideoOnly.IsEnabled = true;
-                btnAudioPlusVideo.IsEnabled = true;
                 btnGetMediaInfo.IsEnabled = true;
 
                 btnAudioOnly.ClearValue(Button.BackgroundProperty);
@@ -224,7 +260,36 @@ namespace YoutubeDL_Holla
                 btnVideoOnly.ClearValue(Button.BackgroundProperty);
                 btnGetMediaInfo.ClearValue(Button.BackgroundProperty);
 
-                dispatcherTimer.Stop();   
+                dispatcherTimer.Stop();
+
+                if (cbAudio.Items.Count == 0 && cbVideo.Items.Count == 0)
+                {
+                    MessageBox.Show(msgNothingFound);
+                }
+            }
+        }
+
+        private void SaveDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            Dir dir = new Dir();
+            string folderPath = dir.OpenDialog();
+
+            if (folderPath == null)
+            {
+                MessageBox.Show("No Folder selected");
+            }
+            else
+            {
+                if (dir.HasAccessToFolder(folderPath))
+                {
+
+                    saveToDirectory.Text = folderPath;
+                }
+                else
+                {
+                    MessageBox.Show("No write access to folder");
+                    saveToDirectory.Text = "";
+                }
             }
         }
     }
