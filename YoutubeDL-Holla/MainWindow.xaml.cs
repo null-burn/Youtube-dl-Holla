@@ -14,11 +14,7 @@ namespace YoutubeDL_Holla
 {
     public partial class MainWindow : MetroWindow
     {
-        string msgInvalidUrl = "Invalid URL, try again!";
-        string msgInvalidFolderPath = "Invalid folder path, try again!";
-        string msgMissingYoutubeDl = "Missing youtube-dl.exe, please review included instructions.";
-        string msgNothingFound = "Nothing found to download, check your URL";
-        DispatcherTimer dispatcherTimer = new DispatcherTimer();
+        private DispatcherTimer dispatcherTimer = new DispatcherTimer();
 
         public MainWindow()
         {
@@ -29,6 +25,9 @@ namespace YoutubeDL_Holla
             btnAudioOnlyMP3.IsEnabled = false;
             btnVideoOnly.IsEnabled = false;
             btnAudioPlusVideo.IsEnabled = false;
+
+            PreReq preReq = new PreReq();
+            preReq.CheckPreReq();
         }
 
         private void GetMedia_Click(object sender, RoutedEventArgs e)
@@ -40,13 +39,13 @@ namespace YoutubeDL_Holla
             if (!Url.Valid(url))
             {
                 letsDoIt = false;
-                MessageBox.Show(msgInvalidUrl);
+                MessageBox.Show(Util.Messages.InvalidUrl);
             }
 
             if (!dir.CheckFolderPath(saveToDirectory.Text) && letsDoIt)
             {
                 letsDoIt = false;
-                MessageBox.Show(msgInvalidFolderPath);
+                MessageBox.Show(Util.Messages.InvalidFolderPath);
             }
 
             if (letsDoIt)
@@ -109,12 +108,12 @@ namespace YoutubeDL_Holla
             if (!Url.Valid(url))
             {
                 letsDoIt = false;
-                MessageBox.Show(msgInvalidUrl);
+                MessageBox.Show(Util.Messages.InvalidUrl);
             }
             if (!preReq.YoutubeDLExists() && letsDoIt)
             {
                 letsDoIt = false;
-                MessageBox.Show(msgMissingYoutubeDl);
+                MessageBox.Show(Util.Messages.MissingYoutubeDl);
             }
 
             if (letsDoIt)
@@ -149,19 +148,19 @@ namespace YoutubeDL_Holla
             {
                 if (!string.IsNullOrEmpty(formatAudioCode) && string.IsNullOrEmpty(formatVideoCode) && !mp3)
                 {
-                    arguments.Append("-f " + formatAudioCode + " ");
+                    arguments.Append("-f ").Append(formatAudioCode).Append(' ');
                 }
                 else if (string.IsNullOrEmpty(formatAudioCode) && !string.IsNullOrEmpty(formatVideoCode))
                 {
-                    arguments.Append("-f " + formatVideoCode + " ");
+                    arguments.Append("-f ").Append(formatVideoCode).Append(' ');
                 }
                 else if (!string.IsNullOrEmpty(formatVideoCode) && !string.IsNullOrEmpty(formatAudioCode))
                 {
-                    arguments.Append("-f " + formatVideoCode + "+" + formatAudioCode + " ");
+                    arguments.Append("-f ").Append(formatVideoCode).Append('+').Append(formatAudioCode).Append(' ');
                 }
             }
 
-            arguments.Append("-o " + saveToDirectory.Text + "/%(title)s.%(ext)s ");
+            arguments.Append("-o ").Append(saveToDirectory.Text).Append("/%(title)s.%(ext)s ");
             arguments.Append(url);
 
             consoleControl.ShowDiagnostics = true;
@@ -264,7 +263,7 @@ namespace YoutubeDL_Holla
 
                 if (cbAudio.Items.Count == 0 && cbVideo.Items.Count == 0)
                 {
-                    MessageBox.Show(msgNothingFound);
+                    MessageBox.Show(Util.Messages.NothingFound);
                 }
             }
         }
@@ -291,6 +290,15 @@ namespace YoutubeDL_Holla
                     saveToDirectory.Text = "";
                 }
             }
+        }
+
+        private void GetYoutubeDL_Click(object sender, RoutedEventArgs e)
+        {
+            btnYoutubeDLReq.Background = Brushes.OrangeRed;
+            btnYoutubeDLReq.IsEnabled = false;
+
+            PreReq preReq = new PreReq();
+            preReq.DownloadYoutubeDL();
         }
     }
 }
